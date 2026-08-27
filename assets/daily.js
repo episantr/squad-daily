@@ -187,6 +187,12 @@ function renderHero(date, team, unavailable, holidays, quotes) {
   }, 70);
 }
 
+function renderFooterMeetingTime(meetingTime) {
+  const el = document.getElementById("footer-quote");
+  if (!el || !meetingTime) return;
+  el.textContent = `${meetingTime} sharp — coffee's brewed, meeting's on.`;
+}
+
 function init(config) {
   const cutoverHour = config.cutoverHour ?? DEFAULT_CUTOVER_HOUR;
   const holidays = config.holidays ?? DEFAULT_HOLIDAYS;
@@ -195,6 +201,7 @@ function init(config) {
   const today = effectiveDate(new Date(), cutoverHour);
 
   renderMasthead(today, config.displayName);
+  renderFooterMeetingTime(config.meetingTime);
 
   const holidayName = isHoliday(today, holidays);
   if (isWeekend(today)) {
