@@ -104,7 +104,107 @@ function pickBackup(team, unavailable, date, primary) {
   return pool[hashDate(date, "::backup") % pool.length];
 }
 
-function init(config) {}
+const EN_DAYS = [
+  "Sunday", "Monday", "Tuesday", "Wednesday",
+  "Thursday", "Friday", "Saturday",
+];
+const EN_MONTHS = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December",
+];
+
+function formatDate(date) {
+  const d = EN_DAYS[date.getDay()];
+  const day = date.getDate();
+  const m = EN_MONTHS[date.getMonth()];
+  const y = date.getFullYear();
+  return `${d}, ${m} ${day}, ${y}`;
+}
+
+function issueNumber(date) {
+  const days = Math.floor((date - EPOCH) / 86400000);
+  return "NO. " + String(Math.max(1, days + 1)).padStart(3, "0");
+}
+
+function renderMasthead(date, displayName) {
+  document.getElementById("issue-number").textContent = issueNumber(date);
+  document.getElementById("date-stamp").textContent = formatDate(date).toUpperCase();
+  document.getElementById("gazette-name").textContent =
+    `THE ${displayName.toUpperCase()} GAZETTE`;
+  document.getElementById("footer-left").textContent = "EST. " + EPOCH.getFullYear();
+}
+
+function renderClosed(title, subtitle) {
+  document.getElementById("hero").innerHTML = `
+    <div class="closed-state">
+      <div class="hero-label" style="margin-bottom: 1.5rem;">Press Closed</div>
+      <h2 class="closed-title">${title}</h2>
+      <p class="closed-subtitle">${subtitle}</p>
+    </div>
+  `;
+}
+
+function renderHero(date, team, unavailable, holidays, quotes) {
+  const primary = pickPrimary(team, unavailable, holidays, date);
+
+  if (!primary) {
+    renderClosed(
+      "Full House Off",
+      "Nobody in the pool today — the whole team appears to be out."
+    );
+    return;
+  }
+
+  const backup = pickBackup(team, unavailable, date, primary);
+  const quoteIdx = team.indexOf(primary);
+  const quote = quotes[((quoteIdx >= 0 ? quoteIdx : 0) % quotes.length)];
+
+  document.getElementById("hero").innerHTML = `
+    <div class="hero">
+      <div class="hero-label">Today's Facilitator</div>
+      <span class="hero-name rolling" id="hero-name">${team[0]}</span>
+      ${
+        backup
+          ? `<div class="hero-backup">Standby · <span class="hero-backup-name">${backup}</span></div>`
+          : ""
+      }
+      <span class="hero-rule"></span>
+      <p class="hero-quote">${quote}</p>
+    </div>
+  `;
+
+  const el = document.getElementById("hero-name");
+  let ticks = 0;
+  const maxTicks = 14;
+  const interval = setInterval(() => {
+    el.textContent = team[Math.floor(Math.random() * team.length)];
+    ticks++;
+    if (ticks >= maxTicks) {
+      clearInterval(interval);
+      el.textContent = primary;
+      el.classList.remove("rolling");
+    }
+  }, 70);
+}
+
+function init(config) {
+  const cutoverHour = config.cutoverHour ?? DEFAULT_CUTOVER_HOUR;
+  const holidays = config.holidays ?? DEFAULT_HOLIDAYS;
+  const unavailable = config.unavailable || {};
+  const quotes = config.quotes || DEFAULT_QUOTES;
+  const today = effectiveDate(new Date(), cutoverHour);
+
+  renderMasthead(today, config.displayName);
+
+  const holidayName = isHoliday(today, holidays);
+  if (isWeekend(today)) {
+    renderClosed("Weekend", "The press is closed. Back on Monday.");
+  } else if (holidayName) {
+    renderClosed("Holiday", holidayName);
+  } else {
+    renderHero(today, config.team, unavailable, holidays, quotes);
+  }
+}
 
 if (typeof module !== "undefined") {
   module.exports = {
@@ -122,4 +222,8 @@ if (typeof module !== "undefined") {
     DEFAULT_QUOTES,
     EPOCH,
   };
+}
+
+if (typeof window !== "undefined" && window.SQUAD_DAILY_CONFIG) {
+  init(window.SQUAD_DAILY_CONFIG);
 }
