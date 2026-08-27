@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Daily Chronicle — Tam Squad</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,900;1,9..144,400;1,9..144,700&family=JetBrains+Mono:wght@400;500;600&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../assets/daily.css" />
+</head>
+<body>
+  <main class="container">
+    <header class="masthead">
+      <div class="masthead-meta">
+        <div class="masthead-meta-left">
+          <span id="issue-number">NO. 001</span>
+          <span id="date-stamp">—</span>
+        </div>
+        <div class="masthead-meta-mid">
+          <span class="dot"></span>
+          <span>LIVE</span>
+        </div>
+        <div class="masthead-meta-right">
+          <span id="gazette-name">THE TAM SQUAD GAZETTE</span>
+          <span>VOL. I</span>
+        </div>
+      </div>
+      <h1 class="masthead-title">The Daily Chronicle</h1>
+      <p class="masthead-tagline">A morning serial for your daily stand-up</p>
+    </header>
+    <section class="hero-wrap" id="hero"></section>
+    <footer class="footer">
+      <span id="footer-left">EST. 2026</span>
+      <span class="footer-quote">10:15 sharp — coffee's brewed, meeting's on.</span>
+      <span id="footer-right">DEV. BY SQUAD</span>
+    </footer>
+  </main>
+  <script>
+    window.SQUAD_DAILY_CONFIG = {
+      slug: "tam",
+      displayName: "Tam Squad",
+      team: ["Khayala", "Namiq", "Rafael A.", "Rahila", "Sabina E.", "Sevil", "Jamal"]
+    };
+  </script>
+  <script src="../../assets/daily.js"></script>
+</body>
+</html>
