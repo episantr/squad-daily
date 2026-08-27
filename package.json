@@ -1,0 +1,7 @@
+{
+  "name": "squad-daily",
+  "private": true,
+  "scripts": {
+    "test": "node --test assets/daily.test.js"
+  }
+}
